@@ -9,6 +9,7 @@ Usage: python script.py <file_path> [--output <output_file>]
 
 import json
 import argparse
+import urllib.parse
 
 def parse_har_file(file_path):
   """
@@ -38,7 +39,7 @@ def generate_curl_command(entry):
   """
   request = entry['request']
   method = request['method']
-  url = request['url']
+  url = urllib.parse.quote_plus(request['url'])
   headers = request.get('headers', [])
   body = request.get('postData', {}).get('text', '')
 
