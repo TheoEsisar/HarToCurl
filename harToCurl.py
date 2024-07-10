@@ -39,7 +39,7 @@ def generate_curl_command(entry):
   """
   request = entry['request']
   method = request['method']
-  escaped_url = urllib.parse.quote((request['url'], safe='/:?=')
+  escaped_url = urllib.parse.quote((request['url'], safe='/:?=&')
   headers = request.get('headers', [])
   body = request.get('postData', {}).get('text', '')
 
