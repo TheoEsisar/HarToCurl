@@ -9,7 +9,7 @@ Usage: python script.py <file_path> [--output <output_file>]
 
 import json
 import argparse
-from urllib.parse import urlparse, quote
+import urllib
 
 def parse_har_file(file_path):
   """
@@ -33,32 +33,13 @@ def parse_har_file(file_path):
 
   return entries
 
-def escape_url(url:str) -> str:
-  """
-  Escape the URL.
-  """
-  parsed_url = urlparse(url)
-  scheme = parsed_url.scheme
-  hostname = parsed_url.hostname
-  # check if special characters are present in the path -> idna encoding
-  if parsed_url.path != quote(parsed_url.path):
-    import idna
-    hostname = idna.encode(parsed_url.hostname).decode('utf-8')
-  
-  path = quote(parsed_url.path)
-
-  # Recombiner les composants de l'URL
-  if parsed_url.username:
-    hostname = f"{quote(parsed_url.username)}:{quote(parsed_url.password)}@{hostname}"
-  return "{}://{}{}".format(scheme, hostname, path)
-
 def generate_curl_command(entry):
   """
   Generate a curl command from a HAR entry.
   """
   request = entry['request']
   method = request['method']
-  escaped_url = escape_url(request['url'])
+  escaped_url = urllib.parse.quote((request['url'], safe='/:?=')
   headers = request.get('headers', [])
   body = request.get('postData', {}).get('text', '')
 
